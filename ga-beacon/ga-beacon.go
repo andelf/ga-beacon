@@ -46,7 +46,7 @@ func generateUUID(cid *string) error {
 }
 
 func main() {
-	beego.Router("/:ua/*", &AnalyticsController{})
+	beego.Router("/*", &AnalyticsController{})
 	beego.Run()
 	//http.HandleFunc("/", handler)
 }
@@ -83,7 +83,7 @@ func (this *AnalyticsController) Get() {
 	}
 	// /account -> account template
 	if len(params) == 1 {
-		this.TplNames = "page.html"
+		this.TplName = "page.html"
 		this.Data["Account"] = params[0]
 		this.Data["Referer"] = refOrg
 		return
@@ -152,6 +152,7 @@ func logHit(params []string, query url.Values, ua string, ip string, cid string)
 	//
 	// GA Protocol reference: https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
 
+	ip = strings.Split(ip, ":")[0]
 	payload := url.Values{
 		"v":   {"1"},        // protocol version = 1
 		"t":   {"pageview"}, // hit type
