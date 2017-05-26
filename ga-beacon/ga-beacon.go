@@ -70,6 +70,11 @@ func (this *AnalyticsController) Get() {
 		return
 	}
 
+	if strings.Contains(r.UserAgent(), "github-camo") {
+		beego.Info("github-camo request, return error")
+		this.Abort("502")
+	}
+
 	// activate referrer path if ?useReferer is used and if referer exists
 	if _, ok := query["useReferer"]; ok {
 		if len(refOrg) != 0 {
@@ -107,7 +112,11 @@ func (this *AnalyticsController) Get() {
 		this.Ctx.Output.Header("Cache-Control", "no-cache")
 		this.Ctx.Output.Header("CID", cid)
 
-		logHit(params, query, r.Header.Get("User-Agent"), r.RemoteAddr, cid)
+		ip := r.RemoteAddr
+		if this.Ctx.Input.Header(" X-Forwarded-For") != "" {
+			ip = strings.SplitN(this.Ctx.Input.Header(" X-Forwarded-For"), ",", 1)[0]
+		}
+		logHit(params, query, r.Header.Get("User-Agent"), ip, cid)
 	}
 
 	// Write out GIF pixel or badge, based on presence of "pixel" param.
