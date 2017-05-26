@@ -113,8 +113,8 @@ func (this *AnalyticsController) Get() {
 		this.Ctx.Output.Header("CID", cid)
 
 		ip := r.RemoteAddr
-		if this.Ctx.Input.Header(" X-Forwarded-For") != "" {
-			ip = strings.SplitN(this.Ctx.Input.Header(" X-Forwarded-For"), ",", 1)[0]
+		if this.Ctx.Input.Header("X-Forwarded-For") != "" {
+			ip = strings.SplitN(this.Ctx.Input.Header("X-Forwarded-For"), ",", 1)[0]
 		}
 		logHit(params, query, r.Header.Get("User-Agent"), ip, cid)
 	}
